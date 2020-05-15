@@ -134,41 +134,6 @@ impl Default for Signature {
     }
 }
 
-/// Library-internal representation of a Secp256k1 adaptor signature
-#[repr(C)]
-pub struct AdaptorSignature([c_uchar; 65]);
-impl_array_newtype!(AdaptorSignature, c_uchar, 65);
-impl_raw_debug!(AdaptorSignature);
-
-impl AdaptorSignature {
-    /// Create a new (zeroed) signature usable for the FFI interface
-    pub fn new() -> AdaptorSignature { AdaptorSignature([0; 65]) }
-}
-
-impl Default for AdaptorSignature {
-    fn default() -> Self {
-        AdaptorSignature::new()
-    }
-}
-
-/// Library-internal representation of a Secp256k1 adaptor proof
-#[repr(C)]
-pub struct AdaptorProof([c_uchar; 97]);
-impl_array_newtype!(AdaptorProof, c_uchar, 97);
-impl_raw_debug!(AdaptorProof);
-
-impl AdaptorProof {
-    /// Create a new (zeroed) signature usable for the FFI interface
-    pub fn new() -> AdaptorProof { AdaptorProof([0; 97]) }
-}
-
-impl Default for AdaptorProof {
-    fn default() -> Self {
-        AdaptorProof::new()
-    }
-}
-
-
 #[cfg(not(feature = "fuzztarget"))]
 extern "C" {
     /// Default ECDH hash function
@@ -264,39 +229,6 @@ extern "C" {
                                 noncefn: NonceFn,
                                 noncedata: *const c_void)
                                 -> c_int;
-
-    #[cfg_attr(not(feature = "external-symbols"), link_name = "rustsecp256k1_v0_1_2_ecdsa_adaptor_sig_verify")]
-    pub fn secp256k1_ecdsa_adaptor_sig_verify(cx: *const Context,
-                                              sig: *const AdaptorSignature,
-                                              pk: *const PublicKey,
-                                              msg32: *const c_uchar,
-                                              adaptor: *const PublicKey,
-                                              adaptor_proof: *const AdaptorProof)
-                                              -> c_int;
-
-    #[cfg_attr(not(feature = "external-symbols"), link_name = "rustsecp256k1_v0_1_2_ecdsa_adaptor_sign")]
-    pub fn secp256k1_ecdsa_adaptor_sign(cx: *const Context,
-                                        sig: *mut AdaptorSignature,
-                                        adaptor_proof: *mut AdaptorProof,
-                                        sk: *const c_uchar,
-                                        adaptor: *const PublicKey,
-                                        msg32: *const c_uchar)
-                                        -> c_int;
-
-    #[cfg_attr(not(feature = "external-symbols"), link_name = "rustsecp256k1_v0_1_2_ecdsa_adaptor_adapt")]
-    pub fn secp256k1_ecdsa_adaptor_adapt(cx: *const Context,
-                                         sig: *mut Signature,
-                                         adaptor_secret: *const c_uchar,
-                                         adaptor_sig: *const AdaptorSignature)
-                                         -> c_int;
-
-    #[cfg_attr(not(feature = "external-symbols"), link_name = "rustsecp256k1_v0_1_2_ecdsa_adaptor_extract_secret")]
-    pub fn secp256k1_ecdsa_adaptor_extract_secret(cx: *const Context,
-                                                  adaptor_secret: *mut c_uchar,
-                                                  sig: *const Signature,
-                                                  adaptor_sig: *const AdaptorSignature,
-                                                  adaptor: *const PublicKey)
-                                                  -> c_int;
 
     // EC
     #[cfg_attr(not(feature = "external-symbols"), link_name = "rustsecp256k1_v0_1_2_ec_seckey_verify")]
